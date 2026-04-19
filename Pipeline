@@ -1,0 +1,34 @@
+Passing values through the global and loacal variables and also through the jenkins dashboard:
+ans alos giving approval input to the deployment
+
+
+pipeline {
+    agent any
+    environment {
+        x="77"
+        y="50"
+    }
+    stages {
+        stage('Code') {
+            steps {
+                echo "The value of x is $x"
+            }
+        }
+        stage ('Build') {
+            steps {
+                echo "The value of x is $x"
+            }
+        }
+        stage ('Deploy') {
+            environment {
+                y = 70
+            }
+            input {
+                message 'can I Deploy?' //Giving approve permission to the deployment 
+            }
+            steps {
+                echo "The value of x and y is $x , $y Today is $day and name is $name"
+            }
+        }
+    }
+}
