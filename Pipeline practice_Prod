@@ -1,0 +1,33 @@
+//Practiced on basic application using code, builded, deploy and Nexus. 
+
+pipeline {
+    agent any
+    tools {
+        maven 'MyMaven'
+    }
+    stages {
+        stage('Code') {
+            input {
+                message "Can I Deploy?"
+            }
+            steps {
+                git branch: 'main', url: 'https://github.com/Kandu45/NewProject.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        stage('Artifact') {
+            steps {
+                nexusArtifactUploader artifacts: [[artifactId: 'myweb', classifier: '', file: 'target/myweb-8.7.1.war', type: 'war']], credentialsId: '77c24525-d13a-4221-b208-49fb5c329b0e', groupId: 'in.javahome', nexusUrl: '52.201.216.50:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'MyRepo', version: '8.7.1'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'Tomcat', path: '', url: 'http://34.239.106.83:8080/')], contextPath: 'e-comm', war: 'target/*.war'
+            }
+        }
+    }
+}
